@@ -1,15 +1,16 @@
 {
   "name": "angular-ui-tree",
-  "version": "2.1.5",
+  "version": "3.0.0-alpha1",
   "homepage": "https://github.com/JimLiu/angular-ui-tree",
   "authors": [
-    "Jim Liu <https://github.com/JimLiu>",
-    "Voles <https://github.com/Voles>"
+    "https://github.com/JimLiu/angular-ui-tree/graphs/contributors"
   ],
   "description": "Tree directive for the angular.js",
   "main": [
     "dist/angular-ui-tree.js",
-    "dist/angular-ui-tree.min.css"
+    "dist/angular-ui-tree.min.js",
+    "dist/angular-ui-tree.min.map",
+    "dist/angular-ui-tree.css"
   ],
   "keywords": [
     "angular",
@@ -19,11 +20,12 @@
     "drag",
     "drop",
     "tree",
-    "node"
+    "treenode",
+    "uitree",
+    "ui-tree"
   ],
   "dependencies": {
-    "angular": ">= 1.2.0",
-    "es5-shim": "2.3.0"
+    "angular": ">= 1.2.0"
   },
   "devDependencies": {
     "angular": ">= 1.2.0",
@@ -32,7 +34,11 @@
     "jasmine-jquery": "~1.0.0",
     "angular-mocks": "~1.2.11",
     "firebase": "~1.0.11",
-    "angularfire": "~0.7.1"
+    "angularfire": "~0.7.1",
+    "angular-route": "~1.3.0",
+    "angular-resource": "~1.3.0",
+    "angular-bootstrap": "~0.11.2",
+    "fontawesome": "~4.2.0"
   },
   "ignore": [
     "node_modules",

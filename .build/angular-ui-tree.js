@@ -1,7 +1,3 @@
-/*! Angular-ui-tree v3.0.0-alpha1
- *  https://github.com/jimliu/angular-ui-tree
- *  Copyright (c) 2014, Jim Liu
- */
 
 /**
 @ngdoc overview
@@ -89,17 +85,3 @@ angular.module('ui.tree').directive("uiTree", function() {
     link: function(scope, element, attrs) {}
   };
 });
-
-angular.module("template/tree/node.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("template/tree/node.html",
-    "<li class=\"ui-tree-node\" ng-class=\"{}\" ng-transclude></li>\n" +
-    "");
-}]);
-
-angular.module("template/tree/tree.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("template/tree/tree.html",
-    "<div>\n" +
-    "  <ul class=\"angular-ui-tree\" ng-transclude></ul>\n" +
-    "</div>\n" +
-    "");
-}]);

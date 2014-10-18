@@ -92,7 +92,9 @@ angular.module('ui.tree').directive("uiTree", function() {
 
 angular.module("template/tree/node.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("template/tree/node.html",
-    "<li class=\"ui-tree-node\" ng-class=\"{}\" ng-transclude></li>\n" +
+    "<li class=\"ui-tree-node\" ng-class=\"{}\">\n" +
+    "  <a ng-click=\"select()\" tab-heading-transclude>{{heading}}</a>\n" +
+    "</li>\n" +
     "");
 }]);
 
