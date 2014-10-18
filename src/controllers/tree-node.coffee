@@ -7,6 +7,7 @@ angular.module('ui.tree').controller 'TreeNodeController', [
 
     ctrl.addNode = addNode = (node) ->
       nodes.push node
+      console.log 'tree-node', nodes
       return
 
     ctrl.removeNode = removeNode = (node) ->

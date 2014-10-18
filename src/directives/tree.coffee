@@ -1,5 +1,5 @@
 angular.module('ui.tree').directive "uiTree", ->
-  restrict: "EA"
+  restrict: "E"
   transclude: true
   replace: true
   scope:

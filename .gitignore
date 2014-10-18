@@ -8,6 +8,7 @@
 ehthumbs.db
 Thumbs.db
 *.log
+log
 
 # Project dependencies #
 ########################
@@ -16,3 +17,4 @@ node_modules
 # IDE files #
 .idea
 *.iml
+.build

@@ -21,6 +21,7 @@ angular.module('ui.tree').controller('TreeNodeController', [
     nodes = ctrl.nodes = $scope.nodes = [];
     ctrl.addNode = addNode = function(node) {
       nodes.push(node);
+      console.log('tree-node', nodes);
     };
     ctrl.removeNode = removeNode = function(node) {
       var index;
@@ -37,6 +38,7 @@ angular.module('ui.tree').controller('TreeController', [
     nodes = ctrl.nodes = $scope.nodes = [];
     ctrl.addNode = addNode = function(node) {
       nodes.push(node);
+      console.log('tree', nodes);
     };
     ctrl.removeNode = removeNode = function(node) {
       var index;
@@ -55,18 +57,20 @@ angular.module('ui.tree').directive("uiTreeNode", function() {
     restrict: 'E',
     transclude: true,
     replace: true,
-    require: ['?^uiTreeNode', '^uiTree'],
+    require: ['?^^uiTreeNode', '^uiTree'],
     scope: {
+      text: '@',
       active: '=?',
       onSelect: '&select',
       onDeselect: '&deselect'
     },
     controller: 'TreeNodeController',
-    templateUrl: "template/tree/tree.html",
+    templateUrl: "template/tree/node.html",
     link: function(scope, element, attrs, controllersArr) {
       var parentCtrl, treeCtrl, treeNodeCtrl;
       treeNodeCtrl = controllersArr[0];
       treeCtrl = controllersArr[1];
+      console.log('treeNodeCtrl', treeNodeCtrl);
       parentCtrl = (treeNodeCtrl ? treeNodeCtrl : treeCtrl);
       parentCtrl.addNode(scope);
       scope.$on("$destroy", function() {
@@ -78,7 +82,7 @@ angular.module('ui.tree').directive("uiTreeNode", function() {
 
 angular.module('ui.tree').directive("uiTree", function() {
   return {
-    restrict: "EA",
+    restrict: "E",
     transclude: true,
     replace: true,
     scope: {
@@ -92,7 +96,11 @@ angular.module('ui.tree').directive("uiTree", function() {
 
 angular.module("template/tree/node.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("template/tree/node.html",
-    "<li class=\"ui-tree-node\" ng-class=\"{}\" ng-transclude></li>\n" +
+    "<li class=\"ui-tree-node\" ng-class=\"{}\">\n" +
+    "  <div>{{text}}</div>\n" +
+    "  <ul ng-show=\"nodes.length > 0\" ng-transclude>\n" +
+    "  </ul>\n" +
+    "</li>\n" +
     "");
 }]);
 

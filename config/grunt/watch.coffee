@@ -29,6 +29,7 @@ module.exports = (grunt) ->
       tasks: [
         'concat'
         'uglify'
+        'copy'
       ]
   )
 

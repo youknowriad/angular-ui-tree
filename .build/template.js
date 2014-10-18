@@ -1,6 +1,10 @@
 angular.module("template/tree/node.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("template/tree/node.html",
-    "<li class=\"ui-tree-node\" ng-class=\"{}\" ng-transclude></li>\n" +
+    "<li class=\"ui-tree-node\" ng-class=\"{}\">\n" +
+    "  <div>{{text}}</div>\n" +
+    "  <ul ng-show=\"nodes.length > 0\" ng-transclude>\n" +
+    "  </ul>\n" +
+    "</li>\n" +
     "");
 }]);
 
