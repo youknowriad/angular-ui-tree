@@ -5,18 +5,25 @@ angular.module('ui.tree').directive "uiTreeNode", ->
   require: ['?^^uiTreeNode', '^uiTree']
   scope:
     text: '@'
-    active: '=?'
+    collapse: '=?'
+    selected: '=?'
+    disabled: '=?'
+    expandIcon: '@'
+    collapseIcon: '@'
+    emptyIcon:'@'
     onSelect: '&select'
     onDeselect: '&deselect'
   controller: 'TreeNodeController'
-  templateUrl: "template/tree/node.html"
-  link: (scope, element, attrs, controllersArr) ->
-    treeNodeCtrl = controllersArr[0]
-    treeCtrl = controllersArr[1]
-    console.log 'treeNodeCtrl', treeNodeCtrl
-    parentCtrl = (if treeNodeCtrl then treeNodeCtrl else treeCtrl)
+  templateUrl: (elem, attrs) ->
+    if attrs.templateUrl
+      return attrs.templateUrl
+    templateType = attrs.templateType || 'default'
+    'template/tree/' + templateType + '/node.html'
 
-    parentCtrl.addNode scope
+  link: (scope, element, attrs, controllersArr) ->
+    scope.init controllersArr
+    scope.collapse = !!scope.collapse
+
     scope.$on "$destroy", ->
       parentCtrl.removeNode scope
       return

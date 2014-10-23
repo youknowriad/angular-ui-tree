@@ -6,6 +6,11 @@ angular.module('ui.tree').directive "uiTree", ->
     noDrop: '=?'
 
   controller: "TreeController"
-  templateUrl: "template/tree/tree.html"
+  templateUrl: (elem, attrs) ->
+    if attrs.templateUrl
+      return attrs.templateUrl
+    templateType = attrs.templateType || 'default'
+    'template/tree/' + templateType + '/tree.html'
+
   link: (scope, element, attrs) ->
     return

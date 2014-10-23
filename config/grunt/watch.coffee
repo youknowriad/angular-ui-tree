@@ -25,6 +25,7 @@ module.exports = (grunt) ->
     dist:
       files: [
         '.build/**/*.js'
+        'src/**/*.css'
       ]
       tasks: [
         'concat'

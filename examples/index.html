@@ -8,21 +8,42 @@
 
     <!-- Bootstrap -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bower_components/fontawesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="ui-tree/angular-ui-tree.css" rel="stylesheet">
 
 </head>
 <body ng-app="uiTreeApp">
-<h1>Hello, world!</h1>
-<ui-tree>
-    <ui-tree-node text="node1">
-        <ui-tree-node text="node1.1">
-            <ui-tree-node text="node1.1.1"></ui-tree-node>
-            <ui-tree-node text="node1.1.2"></ui-tree-node>
-        </ui-tree-node>
-        <ui-tree-node text="node1.2"></ui-tree-node>
-    </ui-tree-node>
-    <ui-tree-node text="node2"></ui-tree-node>
-</ui-tree>
+<div class="container">
+    <h1>Tree Examples</h1>
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>Default</h2>
+            <ui-tree>
+                <ui-tree-node text="node1" data-collapse="true" expand-icon="fa fa-angle-right" collapse-icon="fa fa-angle-down">
+                    <ui-tree-node text="node1.1">
+                        <ui-tree-node text="node1.1.1"></ui-tree-node>
+                        <ui-tree-node text="node1.1.2"></ui-tree-node>
+                    </ui-tree-node>
+                    <ui-tree-node text="node1.2"></ui-tree-node>
+                </ui-tree-node>
+                <ui-tree-node text="node2"></ui-tree-node>
+            </ui-tree>
+        </div>
+        <div class="col-sm-4">
+            <h2>List</h2>
+            <ui-tree template-type="list">
+                <ui-tree-node template-type="list" text="node1" data-collapse="false" expand-icon="fa fa-angle-right" collapse-icon="fa fa-angle-down">
+                    <ui-tree-node template-type="list" text="node1.1{{depth()}}">
+                        <ui-tree-node template-type="list" text="node1.1.1"></ui-tree-node>
+                        <ui-tree-node template-type="list" text="node1.1.2"></ui-tree-node>
+                    </ui-tree-node>
+                    <ui-tree-node template-type="list" text="node1.2"></ui-tree-node>
+                </ui-tree-node>
+                <ui-tree-node template-type="list" text="node2"></ui-tree-node>
+            </ui-tree>
+        </div>
+    </div>
+</div>
 <script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/angular-route/angular-route.min.js"></script>
 <script src="ui-tree/angular-ui-tree.js"></script>
