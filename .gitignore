@@ -13,8 +13,10 @@ log
 # Project dependencies #
 ########################
 node_modules
+bower_components
 
 # IDE files #
 .idea
 *.iml
 .build
+.tmp

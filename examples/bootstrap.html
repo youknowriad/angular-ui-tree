@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="demo">
+
+<head>
+    <meta charset="utf-8">
+    <title>AngularJS ui-tree</title>
+
+    <!--
+    IE8 support, see AngularJS Internet Explorer Compatibility http://docs.angularjs.org/guide/ie
+    For Firefox 3.6, you will also need to include jQuery and ECMAScript 5 shim
+  -->
+    <!--[if lt IE 9]>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-shim.js"></script>
+    <script>
+      document.createElement('ui-tree');
+      document.createElement('ui-tree-node');
+    </script>
+  <![endif]-->
+
+    <!--
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js"></script>
+  -->
+
+    <script src="../bower_components/angular/angular.js"></script>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link href="../bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- ui-tree files -->
+    <script src="../dist/tree.js"></script>
+    <link rel="stylesheet" href="../dist/tree.css">
+
+    <style>
+    body {
+        padding: 15px;
+    }
+    </style>
+</head>
+
+<body ng-controller="DemoCtrl">
+
+    <div class="container">
+        <h1>Tree Examples</h1>
+        <div class="row">
+            <div class="col-sm-4">
+                <h2>Default</h2>
+                <ui-tree>
+                    <ui-tree-node text="'node1'" data-collapsed="true" expand-icon="fa fa-angle-right" collapse-icon="fa fa-angle-down">
+                        <ui-tree-node text="'node1.1'">
+                            <ui-tree-node text="'node1.1.1'"></ui-tree-node>
+                            <ui-tree-node text="'node1.1.2'"></ui-tree-node>
+                        </ui-tree-node>
+                        <ui-tree-node text="'node1.2'"></ui-tree-node>
+                    </ui-tree-node>
+                    <ui-tree-node text="'node2'"></ui-tree-node>
+                </ui-tree>
+            </div>
+            <div class="col-sm-4">
+                <h2>List</h2>
+                <ui-tree template-type="list">
+                    <ui-tree-node text="'node1'" data-collapsed="false" expand-icon="fa fa-angle-right" collapse-icon="fa fa-angle-down">
+                        <ui-tree-node text="'node1.1' + depth()">
+                            <ui-tree-node text="'node1.1.1'"></ui-tree-node>
+                            <ui-tree-node text="'node1.1.2'"></ui-tree-node>
+                        </ui-tree-node>
+                        <ui-tree-node text="'node1.2'"></ui-tree-node>
+                    </ui-tree-node>
+                    <ui-tree-node text="'node2'"></ui-tree-node>
+                </ui-tree>
+            </div>
+        </div>
+    </div>
+
+    <script src="demo.js"></script>
+</body>
+
+</html>

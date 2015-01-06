@@ -1,49 +1,33 @@
 {
-  "name": "angular-ui-tree",
-  "version": "3.0.0-alpha1",
-  "homepage": "https://github.com/JimLiu/angular-ui-tree",
+  "name": "ui-tree",
+  "version": "3.0.0",
+  "homepage": "https://github.com/jimliu/ui-tree",
   "authors": [
-    "https://github.com/JimLiu/angular-ui-tree/graphs/contributors"
+    "Jim Liu"
   ],
-  "description": "Tree directive for the angular.js",
+  "description": "AngularJS ui-tree",
   "main": [
-    "dist/angular-ui-tree.js",
-    "dist/angular-ui-tree.min.js",
-    "dist/angular-ui-tree.min.map",
-    "dist/angular-ui-tree.css"
+    "dist/tree.js",
+    "dist/tree.css"
   ],
-  "keywords": [
-    "angular",
-    "NestedSortable",
-    "sortable",
-    "nested",
-    "drag",
-    "drop",
-    "tree",
-    "treenode",
-    "uitree",
-    "ui-tree"
-  ],
-  "dependencies": {
-    "angular": ">= 1.2.0"
-  },
-  "devDependencies": {
-    "angular": ">= 1.2.0",
-    "bootstrap": "~3.1.0",
-    "jquery": ">=1.10.x",
-    "jasmine-jquery": "~1.0.0",
-    "angular-mocks": "~1.2.11",
-    "firebase": "~1.0.11",
-    "angularfire": "~0.7.1",
-    "angular-route": "~1.3.0",
-    "angular-resource": "~1.3.0",
-    "angular-bootstrap": "~0.11.2",
-    "fontawesome": "~4.2.0"
-  },
+  "license": "MIT",
   "ignore": [
+    "**/.*",
     "node_modules",
     "bower_components",
+    "src",
     "test",
-    "tests"
-  ]
+    "gulpfile.js",
+    "karma.conf.js",
+    "examples"
+  ],
+  "dependencies": {
+    "angular": ">=1.2.18",
+    "bootstrap": "~3.3.1",
+    "font-awesome": "~4.2.0"
+  },
+  "devDependencies": {
+    "jquery": "~1.11",
+    "angular-mocks": ">=1.2.18"
+  }
 }
