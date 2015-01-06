@@ -1,5 +1,5 @@
 <li class="ui-tree-node" ng-class="{}">
-  <div class="ui-tree-node-wholerow" ui-tree-node-wholerow>&nbsp;</div>
+  <div ng-if="$tree.wholerow" class="ui-tree-node-wholerow" ui-tree-node-header="wholerow">&nbsp;</div>
   <a class="ui-tree-link" tabindex="-1" ng-click="toggle()"><i ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}" class="ui-tree-icon fa"></i></a><a class="ui-tree-link ui-tree-node-header" href="javascript:void(0)" tabindex="-1" ui-tree-node-header>
     <i class="fa fa-folder" ng-class="{'fa-folder': collapsed, 'fa-folder-open': !collapsed}" class="ui-tree-icon fa"></i>
     {{text}}

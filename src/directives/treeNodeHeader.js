@@ -3,7 +3,10 @@
     return {
       restrict: 'A',
       require: '^uiTreeNode',
-      link: function(scope, element) {
+      link: function(scope, element, attrs) {
+        var val = attrs.uiTreeNodeHeader,
+            wholerow = val == 'wholerow';
+
         element.bind("click", function($event) {
           $event.stopImmediatePropagation();
           scope.headerClick($event);
@@ -21,17 +24,27 @@
 
         scope.$watch('selected', function(selected) {
           if (selected) {
-            element.addClass('ui-tree-node-selected');
+            if (wholerow) {
+              element.addClass('ui-tree-node-wholerow-selected');
+            } else {
+              element.addClass('ui-tree-node-selected');
+            }
           } else {
             element.removeClass('ui-tree-node-selected');
+            element.removeClass('ui-tree-node-wholerow-selected');
           }
         });
 
         scope.$watch('hovered', function(hovered) {
           if (hovered) {
-            element.addClass('ui-tree-node-header-hover');
+            if (wholerow) {
+              element.addClass('ui-tree-node-wholerow-hover');
+            } else {
+              element.addClass('ui-tree-node-header-hover');
+            }
           } else {
             element.removeClass('ui-tree-node-header-hover');
+            element.removeClass('ui-tree-node-wholerow-hover');
           }
         });
 

@@ -12,6 +12,7 @@
 
     ctrl.selected = undefined;
     ctrl.multiple = false;
+    ctrl.wholerow = false;
     ctrl.clickTriggeredSelect = false;
 
     ctrl.addNode = function(node) {

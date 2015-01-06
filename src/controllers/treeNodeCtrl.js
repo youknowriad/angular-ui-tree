@@ -13,6 +13,7 @@
     $scope.init = function (ctrls) {
       scope.$parentNode = $parentNode = ctrls[0];
       $tree = ctrls[1];
+      scope.$tree = $tree;
       $parent = $parentNode ? $parentNode : $tree;
       $parent.addNode(scope);
     };

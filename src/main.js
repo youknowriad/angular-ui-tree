@@ -8,6 +8,6 @@
   angular.module('ui.tree', [])
 
   .constant('uiTreeConfig', {
-    theme: 'bootstrap',
+    theme: 'default',
     multiple: false, // if multiple nodes can be selected
   });

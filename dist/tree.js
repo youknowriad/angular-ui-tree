@@ -1,7 +1,7 @@
 /*!
  * ui-tree
  * http://github.com/jimliu/ui-tree
- * Version: 3.0.0 - 2015-01-06T07:56:09.553Z
+ * Version: 3.0.0 - 2015-01-06T14:21:56.271Z
  * License: MIT
  */
 
@@ -18,7 +18,7 @@
   angular.module('ui.tree', [])
 
   .constant('uiTreeConfig', {
-    theme: 'bootstrap',
+    theme: 'default',
     multiple: false, // if multiple nodes can be selected
   });
   /*
@@ -35,6 +35,7 @@
 
     ctrl.selected = undefined;
     ctrl.multiple = false;
+    ctrl.wholerow = false;
     ctrl.clickTriggeredSelect = false;
 
     ctrl.addNode = function(node) {
@@ -141,6 +142,7 @@
     $scope.init = function (ctrls) {
       scope.$parentNode = $parentNode = ctrls[0];
       $tree = ctrls[1];
+      scope.$tree = $tree;
       $parent = $parentNode ? $parentNode : $tree;
       $parent.addNode(scope);
     };
@@ -363,6 +365,10 @@
         var $tree = ctrls[0];
         var ngModel = ctrls[1];
         $tree.ngModel = ngModel;
+
+        attrs.$observe('wholerow', function() {
+          $tree.wholerow = attrs.wholerow !== undefined ? scope.$eval(attrs.wholerow) : false;
+        });
       }
     };
   }]);
@@ -410,7 +416,10 @@
     return {
       restrict: 'A',
       require: '^uiTreeNode',
-      link: function(scope, element) {
+      link: function(scope, element, attrs) {
+        var val = attrs.uiTreeNodeHeader,
+            wholerow = val == 'wholerow';
+
         element.bind("click", function($event) {
           $event.stopImmediatePropagation();
           scope.headerClick($event);
@@ -428,56 +437,26 @@
 
         scope.$watch('selected', function(selected) {
           if (selected) {
-            element.addClass('ui-tree-node-selected');
+            if (wholerow) {
+              element.addClass('ui-tree-node-wholerow-selected');
+            } else {
+              element.addClass('ui-tree-node-selected');
+            }
           } else {
             element.removeClass('ui-tree-node-selected');
-          }
-        });
-
-        scope.$watch('hovered', function(hovered) {
-          if (hovered) {
-            element.addClass('ui-tree-node-header-hover');
-          } else {
-            element.removeClass('ui-tree-node-header-hover');
-          }
-        });
-
-      }
-    };
-  }]);
-  angular.module('ui.tree')
-  .directive('uiTreeNodeWholerow', [function() {
-    return {
-      restrict: 'A',
-      require: '^uiTreeNode',
-      link: function(scope, element) {
-        element.bind("click", function($event) {
-          $event.stopImmediatePropagation();
-          scope.headerClick($event);
-        });
-
-        element.bind('mouseover', function($event) {
-          $event.stopImmediatePropagation();
-          scope.headerHover($event);
-        });
-
-        element.bind('mouseleave', function($event) {
-          $event.stopImmediatePropagation();
-          scope.headerUnhover($event);
-        });
-
-        scope.$watch('selected', function(selected) {
-          if (selected) {
-            element.addClass('ui-tree-node-wholerow-selected');
-          } else {
             element.removeClass('ui-tree-node-wholerow-selected');
           }
         });
 
         scope.$watch('hovered', function(hovered) {
           if (hovered) {
-            element.addClass('ui-tree-node-wholerow-hover');
+            if (wholerow) {
+              element.addClass('ui-tree-node-wholerow-hover');
+            } else {
+              element.addClass('ui-tree-node-header-hover');
+            }
           } else {
+            element.removeClass('ui-tree-node-header-hover');
             element.removeClass('ui-tree-node-wholerow-hover');
           }
         });
@@ -487,5 +466,5 @@
   }]);
 })();
 
-angular.module("ui.tree").run(["$templateCache", function($templateCache) {$templateCache.put("bootstrap/tree-node.tpl.html","<li class=\"ui-tree-node\" ng-class=\"{}\"><div class=\"ui-tree-node-wholerow\" ui-tree-node-wholerow=\"\">&nbsp;</div><a class=\"ui-tree-link\" tabindex=\"-1\" ng-click=\"toggle()\"><i ng-class=\"{\'fa-caret-right\': collapsed, \'fa-caret-down\': !collapsed}\" class=\"ui-tree-icon fa\"></i></a><a class=\"ui-tree-link ui-tree-node-header\" href=\"javascript:void(0)\" tabindex=\"-1\" ui-tree-node-header=\"\"><i class=\"fa fa-folder\" ng-class=\"{\'fa-folder\': collapsed, \'fa-folder-open\': !collapsed}\"></i> {{text}}</a><ul class=\"ui-tree-nodes\" ng-show=\"nodes.length > 0 && !collapsed\" ng-transclude=\"\"></ul></li>");
-$templateCache.put("bootstrap/tree.tpl.html","<div class=\"ui-tree tree-default ui-tree-wholerow\" ui-tree-key-handler=\"\"><ul ng-transclude=\"\" class=\"ui-tree-nodes\"></ul></div>");}]);
+angular.module("ui.tree").run(["$templateCache", function($templateCache) {$templateCache.put("default/tree-node.tpl.html","<li class=\"ui-tree-node\" ng-class=\"{}\"><div ng-if=\"$tree.wholerow\" class=\"ui-tree-node-wholerow\" ui-tree-node-header=\"wholerow\">&nbsp;</div><a class=\"ui-tree-link\" tabindex=\"-1\" ng-click=\"toggle()\"><i ng-class=\"{\'fa-caret-right\': collapsed, \'fa-caret-down\': !collapsed}\" class=\"ui-tree-icon fa\"></i></a><a class=\"ui-tree-link ui-tree-node-header\" href=\"javascript:void(0)\" tabindex=\"-1\" ui-tree-node-header=\"\"><i class=\"fa fa-folder\" ng-class=\"{\'fa-folder\': collapsed, \'fa-folder-open\': !collapsed}\"></i> {{text}}</a><ul class=\"ui-tree-nodes\" ng-show=\"nodes.length > 0 && !collapsed\" ng-transclude=\"\"></ul></li>");
+$templateCache.put("default/tree.tpl.html","<div class=\"ui-tree tree-default\" ng-class=\"{\'ui-tree-wholerow\': $tree.wholerow}\" ui-tree-key-handler=\"\"><ul ng-transclude=\"\" class=\"ui-tree-nodes\"></ul></div>");}]);

@@ -20,6 +20,10 @@
         var $tree = ctrls[0];
         var ngModel = ctrls[1];
         $tree.ngModel = ngModel;
+
+        attrs.$observe('wholerow', function() {
+          $tree.wholerow = attrs.wholerow !== undefined ? scope.$eval(attrs.wholerow) : false;
+        });
       }
     };
   }]);
