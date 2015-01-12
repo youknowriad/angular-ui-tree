@@ -38,7 +38,7 @@ gulp.task('clean', function(cb) {
 });
 
 gulp.task('buildLib', function(cb) {
-  return gulp.src(['src/main.js', 'src/controllers/*.js', 'src/directives/*.js'])
+  return gulp.src(['src/main.js', 'src/services/*.js', 'src/controllers/*.js', 'src/directives/*.js'])
     .pipe(plumber({
       errorHandler: handleError
     }))

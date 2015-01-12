@@ -44,29 +44,11 @@
         <div class="row">
             <div class="col-sm-4">
                 <h2>Default</h2>
-                <ui-tree>
-                    <ui-tree-node text="'node1'" data-collapsed="true" expand-icon="fa fa-angle-right" collapse-icon="fa fa-angle-down">
-                        <ui-tree-node text="'node1.1'">
-                            <ui-tree-node text="'node1.1.1'"></ui-tree-node>
-                            <ui-tree-node text="'node1.1.2'"></ui-tree-node>
-                        </ui-tree-node>
-                        <ui-tree-node text="'node1.2'"></ui-tree-node>
-                    </ui-tree-node>
-                    <ui-tree-node text="'node2'"></ui-tree-node>
-                </ui-tree>
+                <ui-tree ng-model="tree"></ui-tree>
             </div>
             <div class="col-sm-4">
-                <h2>List</h2>
-                <ui-tree data-wholerow="true">
-                    <ui-tree-node text="'node1'" data-collapsed="false" expand-icon="fa fa-angle-right" collapse-icon="fa fa-angle-down">
-                        <ui-tree-node text="'node1.1' + depth()">
-                            <ui-tree-node text="'node1.1.1'"></ui-tree-node>
-                            <ui-tree-node text="'node1.1.2'"></ui-tree-node>
-                        </ui-tree-node>
-                        <ui-tree-node text="'node1.2'"></ui-tree-node>
-                    </ui-tree-node>
-                    <ui-tree-node text="'node2'"></ui-tree-node>
-                </ui-tree>
+                <h2>Data</h2>
+                <pre class="code">{{ tree | json }}</pre>
             </div>
         </div>
     </div>

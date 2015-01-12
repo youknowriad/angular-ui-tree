@@ -1,38 +1,33 @@
   angular.module('ui.tree')
-  .directive('uiTreeNode', ['uiTreeConfig', '$parse', '$log',
-    function(uiTreeConfig, $parse) {
+  .directive('uiTreeNode', ['uiTreeConfig', 'uiTreeMinErr', '$parse', '$compile', '$http', '$templateCache',
+    function(uiTreeConfig, uiTreeMinErr, $parse, $compile, $http, $templateCache) {
     return {
       restrict: 'EA',
-      require: ['?^^uiTreeNode', '^uiTree'],
+      require: ['?^^uiTreeNode', '^uiTree', 'ngModel'],
       replace: true,
-      transclude: true,
       scope: true,
       controller: 'uiTreeNodeCtrl',
       controllerAs: '$treeNode',
 
-      templateUrl: function(element) {
-        // Gets theme attribute from parent (ui-tree)
-        var theme = element.parent().attr('theme') || uiTreeConfig.theme;
-        return theme + '/tree-node.tpl.html';
-      },
-
       link: function(scope, element, attrs, ctrls) {
-        scope.init(ctrls);
+        scope.init(ctrls, element);
 
         scope.onSelectCallback = $parse(attrs.onSelect);
 
-        attrs.$observe('collapsed', function() {
-          scope.collapsed = attrs.collapsed !== undefined ? scope.$eval(attrs.collapsed) : false;
-        });
+        var $tree = ctrls[1],
+            theme = $tree.theme || uiTreeConfig.theme;
+        var templateUrl = attrs.templateUrl || theme + '/tree-node.tpl.html';
 
-        attrs.$observe('selected', function() {
-          scope.selected = attrs.selected !== undefined ? scope.$eval(attrs.selected) : false;
-        });
-
-        attrs.$observe('text', function() {
-          if (attrs.text !== undefined) {
-            scope.text = scope.$eval(attrs.text);
+        $http.get(templateUrl, {
+          cache: $templateCache
+        })
+        .then(function(response) {
+          element.html(response.data);
+          if (angular.isArray(scope.$node.nodes)) {
+            var html = "<ui-tree-nodes nodes='$node.nodes' parent='$node'></ui-tree-nodes>";
+            element.querySelectorAll('.ui-tree-nodes-placeholder').replaceWith(html);
           }
+          $compile(element.contents())(scope);
         });
       }
     };

@@ -1,7 +1,7 @@
 /*!
  * ui-tree
  * http://github.com/jimliu/ui-tree
- * Version: 3.0.0 - 2015-01-06T14:21:56.271Z
+ * Version: 3.0.0 - 2015-01-12T03:48:12.483Z
  * License: MIT
  */
 
@@ -20,6 +20,15 @@
   .constant('uiTreeConfig', {
     theme: 'default',
     multiple: false, // if multiple nodes can be selected
+  });
+  angular.module('ui.tree')
+  .service('uiTreeMinErr', function() {
+    var minErr = angular.$$minErr('ui.tree');
+    return function() {
+      var error = minErr.apply(this, arguments);
+      var message = error.message.replace(new RegExp('\nhttp://errors.angularjs.org/.*'), '');
+      return new Error(message);
+    };
   });
   /*
   Controller for ui-tree
@@ -128,13 +137,14 @@
 
   }]);
   angular.module('ui.tree')
-  .controller('uiTreeNodeCtrl', ['$scope', '$log',
+  .controller('uiTreeNodeCtrl', ['$scope', '$compile', 'uiTreeMinErr',
     function($scope) {
 
     var ctrl = this,
-        destroyed, $parentNode, $parent, $tree,
+        destroyed, $parentNode, $parent, $tree, $node,
         scope = ctrl.scope = $scope,
-        nodes = ctrl.nodes = $scope.nodes = [];
+        nodes = ctrl.nodes = $scope.nodes = [],
+        ngModel = null;
 
     scope.selected = false;
     scope.hovered = false;
@@ -142,10 +152,18 @@
     $scope.init = function (ctrls) {
       scope.$parentNode = $parentNode = ctrls[0];
       $tree = ctrls[1];
+      ngModel = ctrls[2];
       scope.$tree = $tree;
+      ctrl.ngModel = ngModel;
+
       $parent = $parentNode ? $parentNode : $tree;
       $parent.addNode(scope);
+
+      ngModel.$render = function() {
+        $node = scope.$node = ngModel.$viewValue;
+      };
     };
+
 
     ctrl.addNode = function(node) {
       nodes.push(node);
@@ -157,15 +175,15 @@
     };
 
     $scope.toggle = function() {
-      $scope.collapsed = !$scope.collapsed;
+      $node.collapsed = !$node.collapsed;
     };
 
     $scope.expand = function() {
-      $scope.collapsed = false;
+      $node.collapsed = false;
     };
 
     $scope.collapse = function() {
-      $scope.collapsed = true;
+      $node.collapsed = true;
     };
 
     $scope.index = function() {
@@ -197,7 +215,7 @@
     };
 
     $scope.lastExpanedNode = function() {
-      if ($scope.collapsed || nodes.length === 0) {
+      if ($node.collapsed || nodes.length === 0) {
         return $scope;
       }
       var last = nodes[nodes.length - 1];
@@ -205,12 +223,12 @@
     };
 
     $scope.nextExpandedNode = function() {
-      if (!$scope.collapsed && nodes.length > 0) {
+      if (!$node.collapsed && nodes.length > 0) {
         return nodes[0];
       }
       var next = $scope.next();
       if (next) {
-        if (next.collapsed || next.nodes.length === 0) {
+        if (next.$node.collapsed || next.nodes.length === 0) {
           return next;
         }
         return next.nodes[0];
@@ -345,8 +363,8 @@
   }]);
   angular.module('ui.tree')
   .directive('uiTree',
-    ['$document', 'uiTreeConfig', '$parse', '$log',
-    function($document, uiTreeConfig) {
+    ['$document', 'uiTreeConfig', 'uiTreeMinErr', '$parse', '$log',
+    function($document, uiTreeConfig, uiTreeMinErr) {
     return {
       restrict: 'EA',
       templateUrl: function(tElement, tAttrs) {
@@ -354,8 +372,7 @@
         return theme + '/tree.tpl.html';
       },
       replace: true,
-      transclude: true,
-      require: ['uiTree', '?ngModel'],
+      require: ['uiTree', 'ngModel'],
       scope: true,
 
       controller: 'uiTreeCtrl',
@@ -366,6 +383,14 @@
         var ngModel = ctrls[1];
         $tree.ngModel = ngModel;
 
+        ngModel.$render = function() {
+          // Make sure that model value is array
+          if(!angular.isArray(ngModel.$viewValue)){
+            throw uiTreeMinErr('treeModel', "Expected model value to be array but got '{0}'", ngModel.$viewValue);
+          }
+          $tree.$nodes = ngModel.$viewValue;
+        };
+
         attrs.$observe('wholerow', function() {
           $tree.wholerow = attrs.wholerow !== undefined ? scope.$eval(attrs.wholerow) : false;
         });
@@ -373,40 +398,35 @@
     };
   }]);
   angular.module('ui.tree')
-  .directive('uiTreeNode', ['uiTreeConfig', '$parse', '$log',
-    function(uiTreeConfig, $parse) {
+  .directive('uiTreeNode', ['uiTreeConfig', 'uiTreeMinErr', '$parse', '$compile', '$http', '$templateCache',
+    function(uiTreeConfig, uiTreeMinErr, $parse, $compile, $http, $templateCache) {
     return {
       restrict: 'EA',
-      require: ['?^^uiTreeNode', '^uiTree'],
+      require: ['?^^uiTreeNode', '^uiTree', 'ngModel'],
       replace: true,
-      transclude: true,
       scope: true,
       controller: 'uiTreeNodeCtrl',
       controllerAs: '$treeNode',
 
-      templateUrl: function(element) {
-        // Gets theme attribute from parent (ui-tree)
-        var theme = element.parent().attr('theme') || uiTreeConfig.theme;
-        return theme + '/tree-node.tpl.html';
-      },
-
       link: function(scope, element, attrs, ctrls) {
-        scope.init(ctrls);
+        scope.init(ctrls, element);
 
         scope.onSelectCallback = $parse(attrs.onSelect);
 
-        attrs.$observe('collapsed', function() {
-          scope.collapsed = attrs.collapsed !== undefined ? scope.$eval(attrs.collapsed) : false;
-        });
+        var $tree = ctrls[1],
+            theme = $tree.theme || uiTreeConfig.theme;
+        var templateUrl = attrs.templateUrl || theme + '/tree-node.tpl.html';
 
-        attrs.$observe('selected', function() {
-          scope.selected = attrs.selected !== undefined ? scope.$eval(attrs.selected) : false;
-        });
-
-        attrs.$observe('text', function() {
-          if (attrs.text !== undefined) {
-            scope.text = scope.$eval(attrs.text);
+        $http.get(templateUrl, {
+          cache: $templateCache
+        })
+        .then(function(response) {
+          element.html(response.data);
+          if (angular.isArray(scope.$node.nodes)) {
+            var html = "<ui-tree-nodes nodes='$node.nodes' parent='$node'></ui-tree-nodes>";
+            element.querySelectorAll('.ui-tree-nodes-placeholder').replaceWith(html);
           }
+          $compile(element.contents())(scope);
         });
       }
     };
@@ -464,7 +484,26 @@
       }
     };
   }]);
+  angular.module('ui.tree')
+  .directive('uiTreeNodes', ['uiTreeConfig',
+    function(uiTreeConfig) {
+    return {
+      restrict: 'E',
+      replace: true,
+      scope: {
+        nodes: '=',
+        parent: '='
+      },
+
+      templateUrl: function(element) {
+        // Gets theme attribute from parent (ui-tree)
+        var theme = element.parent().attr('theme') || uiTreeConfig.theme;
+        return theme + '/tree-nodes.tpl.html';
+      }
+    };
+  }]);
 })();
 
-angular.module("ui.tree").run(["$templateCache", function($templateCache) {$templateCache.put("default/tree-node.tpl.html","<li class=\"ui-tree-node\" ng-class=\"{}\"><div ng-if=\"$tree.wholerow\" class=\"ui-tree-node-wholerow\" ui-tree-node-header=\"wholerow\">&nbsp;</div><a class=\"ui-tree-link\" tabindex=\"-1\" ng-click=\"toggle()\"><i ng-class=\"{\'fa-caret-right\': collapsed, \'fa-caret-down\': !collapsed}\" class=\"ui-tree-icon fa\"></i></a><a class=\"ui-tree-link ui-tree-node-header\" href=\"javascript:void(0)\" tabindex=\"-1\" ui-tree-node-header=\"\"><i class=\"fa fa-folder\" ng-class=\"{\'fa-folder\': collapsed, \'fa-folder-open\': !collapsed}\"></i> {{text}}</a><ul class=\"ui-tree-nodes\" ng-show=\"nodes.length > 0 && !collapsed\" ng-transclude=\"\"></ul></li>");
-$templateCache.put("default/tree.tpl.html","<div class=\"ui-tree tree-default\" ng-class=\"{\'ui-tree-wholerow\': $tree.wholerow}\" ui-tree-key-handler=\"\"><ul ng-transclude=\"\" class=\"ui-tree-nodes\"></ul></div>");}]);
+angular.module("ui.tree").run(["$templateCache", function($templateCache) {$templateCache.put("default/tree-node.tpl.html","<li class=\"ui-tree-node\"><div ng-if=\"$tree.wholerow\" class=\"ui-tree-node-wholerow\" ui-tree-node-header=\"wholerow\">&nbsp;</div><a class=\"ui-tree-link\" tabindex=\"-1\" ng-click=\"toggle()\"><i ng-class=\"{\'fa-caret-right\': $node.collapsed, \'fa-caret-down\': !$node.collapsed}\" class=\"ui-tree-icon fa\"></i></a><a class=\"ui-tree-link ui-tree-node-header\" href=\"javascript:void(0)\" tabindex=\"-1\" ui-tree-node-header=\"\"><i class=\"fa fa-folder\" ng-class=\"{\'fa-folder\': $node.collapsed, \'fa-folder-open\': !$node.collapsed}\"></i> {{$node.text}}</a><div class=\"ui-tree-nodes-placeholder\"></div></li>");
+$templateCache.put("default/tree-nodes.tpl.html","<ul class=\"ui-tree-nodes\" ng-show=\"nodes.length > 0 && (!parent || !parent.collapsed)\"><ui-tree-node ng-repeat=\"n in nodes\" ng-model=\"n\"></ui-tree-node></ul>");
+$templateCache.put("default/tree.tpl.html","<div class=\"ui-tree tree-default\" ng-class=\"{\'ui-tree-wholerow\': $tree.wholerow}\" ui-tree-key-handler=\"\"><ui-tree-nodes nodes=\"$tree.$nodes\" parent=\"null\"></ui-tree-nodes></div>");}]);

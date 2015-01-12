@@ -1,11 +1,12 @@
   angular.module('ui.tree')
-  .controller('uiTreeNodeCtrl', ['$scope', '$log',
+  .controller('uiTreeNodeCtrl', ['$scope', '$compile', 'uiTreeMinErr',
     function($scope) {
 
     var ctrl = this,
-        destroyed, $parentNode, $parent, $tree,
+        destroyed, $parentNode, $parent, $tree, $node,
         scope = ctrl.scope = $scope,
-        nodes = ctrl.nodes = $scope.nodes = [];
+        nodes = ctrl.nodes = $scope.nodes = [],
+        ngModel = null;
 
     scope.selected = false;
     scope.hovered = false;
@@ -13,10 +14,18 @@
     $scope.init = function (ctrls) {
       scope.$parentNode = $parentNode = ctrls[0];
       $tree = ctrls[1];
+      ngModel = ctrls[2];
       scope.$tree = $tree;
+      ctrl.ngModel = ngModel;
+
       $parent = $parentNode ? $parentNode : $tree;
       $parent.addNode(scope);
+
+      ngModel.$render = function() {
+        $node = scope.$node = ngModel.$viewValue;
+      };
     };
+
 
     ctrl.addNode = function(node) {
       nodes.push(node);
@@ -28,15 +37,15 @@
     };
 
     $scope.toggle = function() {
-      $scope.collapsed = !$scope.collapsed;
+      $node.collapsed = !$node.collapsed;
     };
 
     $scope.expand = function() {
-      $scope.collapsed = false;
+      $node.collapsed = false;
     };
 
     $scope.collapse = function() {
-      $scope.collapsed = true;
+      $node.collapsed = true;
     };
 
     $scope.index = function() {
@@ -68,7 +77,7 @@
     };
 
     $scope.lastExpanedNode = function() {
-      if ($scope.collapsed || nodes.length === 0) {
+      if ($node.collapsed || nodes.length === 0) {
         return $scope;
       }
       var last = nodes[nodes.length - 1];
@@ -76,12 +85,12 @@
     };
 
     $scope.nextExpandedNode = function() {
-      if (!$scope.collapsed && nodes.length > 0) {
+      if (!$node.collapsed && nodes.length > 0) {
         return nodes[0];
       }
       var next = $scope.next();
       if (next) {
-        if (next.collapsed || next.nodes.length === 0) {
+        if (next.$node.collapsed || next.nodes.length === 0) {
           return next;
         }
         return next.nodes[0];
