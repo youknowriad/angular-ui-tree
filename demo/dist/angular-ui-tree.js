@@ -960,7 +960,7 @@
                 if (!dragDelaying) {
                   dragStarted = true;
                   scope.$apply(function() {
-                    scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
+                    scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
                   });
                 }
                 return;
@@ -1138,7 +1138,7 @@
                 }
 
                 scope.$apply(function() {
-                  scope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
+                  scope.$treeScope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
                 });
               }
             };
@@ -1148,7 +1148,7 @@
 
               if (dragElm) {
                 scope.$treeScope.$apply(function() {
-                  scope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
+                  scope.$treeScope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
                 });
                 // roll back elements changed
                 hiddenPlaceElm.replaceWith(scope.$element);
@@ -1159,13 +1159,13 @@
                 if (scope.$$apply) {
                   dragInfo.apply();
                   scope.$treeScope.$apply(function() {
-                    scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                    scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
                   bindDrag();
                 }
                 scope.$treeScope.$apply(function() {
-                  scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
+                  scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
                 scope.$$apply = false;
                 dragInfo = null;
